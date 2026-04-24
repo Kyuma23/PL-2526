@@ -12,7 +12,7 @@ if __name__ == '__main__':
         C = 3.14
         
         ! Controlo de fluxo e operadores relacionais
-        IF (A .LT. B .AND. .TRUE.) THEN
+        IF (.NOT. A .LT. B .AND. .TRUE. .AND. .FALSE. ) THEN
             PRINT *, 'A e menor que B'
             CALL MINHASUB(A)
         ENDIF

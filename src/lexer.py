@@ -10,6 +10,7 @@ reserved = {
     'INTEGER': 'INTEGER',
     'REAL': 'REAL',
     'LOGICAL': 'LOGICAL',
+    'CHARACTER': 'CHARACTER',
     
     # Controlo de Fluxo
     'IF': 'IF',
@@ -60,7 +61,7 @@ tokens = [
     'LPAREN',       # (
     'RPAREN',       # )
     'COMMA',        # ,
-] + list(set(reserved.values()))
+] + list(dict.fromkeys(reserved.values()))
 
 t_PLUS    = r'\+'
 t_MINUS   = r'-'
