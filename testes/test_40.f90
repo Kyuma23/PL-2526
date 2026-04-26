@@ -1,0 +1,8 @@
+PROGRAM DO_TEST_40
+  INTEGER I, S
+  S = 0
+  DO 140 I = 1, 40, 2
+    S = S + I
+140 CONTINUE
+  PRINT *, S
+END

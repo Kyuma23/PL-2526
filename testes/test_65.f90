@@ -1,0 +1,10 @@
+PROGRAM MIXED_65
+  ! Teste de complexidade 65
+  CHARACTER*20 STR
+  INTEGER X(65)
+  STR = "TESTE 65"
+  DO 10 I = 1, 65
+    X(I) = I * 2
+10 CONTINUE
+  PRINT *, STR, X(1)
+END

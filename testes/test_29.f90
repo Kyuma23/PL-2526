@@ -1,0 +1,8 @@
+PROGRAM IF_TEST_29
+  IF (29 .GT. 25) THEN
+    PRINT *, "MAIOR"
+    IF (29 .EQ. 30) PRINT *, "VINTE"
+  ELSE
+    PRINT *, "MENOR"
+  ENDIF
+END

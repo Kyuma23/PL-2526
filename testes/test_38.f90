@@ -1,0 +1,8 @@
+PROGRAM DO_TEST_38
+  INTEGER I, S
+  S = 0
+  DO 138 I = 1, 38, 2
+    S = S + I
+138 CONTINUE
+  PRINT *, S
+END

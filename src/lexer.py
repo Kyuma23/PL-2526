@@ -82,7 +82,7 @@ def t_COMMENT(t):
 
 # Strings
 def t_STRING(t):
-    r'\'[^\']*\''
+    r'\'[^\']*\'|\"[^\"]*\"'
     t.value = t.value[1:-1] 
     return t
 

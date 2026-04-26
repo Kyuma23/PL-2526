@@ -1,0 +1,5 @@
+PROGRAM ARITH_6
+  INTEGER A
+  A = 6 + 12 * (11 - 6)
+  PRINT *, A
+END

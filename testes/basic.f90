@@ -1,0 +1,8 @@
+PROGRAM BASIC
+  INTEGER A, B
+  REAL C
+  A = 10
+  B = 20
+  C = (A + B) * 1.5
+  PRINT *, 'RESULTADO:', C
+END

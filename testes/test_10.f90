@@ -1,0 +1,5 @@
+PROGRAM ARITH_10
+  INTEGER A
+  A = 10 + 20 * (15 - 10)
+  PRINT *, A
+END

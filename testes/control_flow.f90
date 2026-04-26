@@ -1,0 +1,12 @@
+PROGRAM CONTROL
+  INTEGER I, SUM
+  SUM = 0
+  DO 10 I = 1, 10
+    IF (I .GT. 5) THEN
+      SUM = SUM + I
+    ELSE
+      SUM = SUM - I
+    ENDIF
+10 CONTINUE
+  PRINT *, 'SOMA:', SUM
+END

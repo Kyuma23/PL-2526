@@ -1,0 +1,8 @@
+PROGRAM DO_TEST_32
+  INTEGER I, S
+  S = 0
+  DO 132 I = 1, 32, 2
+    S = S + I
+132 CONTINUE
+  PRINT *, S
+END

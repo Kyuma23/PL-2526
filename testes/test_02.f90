@@ -1,0 +1,5 @@
+PROGRAM ARITH_2
+  INTEGER A
+  A = 2 + 4 * (7 - 2)
+  PRINT *, A
+END

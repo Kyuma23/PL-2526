@@ -1,0 +1,8 @@
+PROGRAM DO_TEST_37
+  INTEGER I, S
+  S = 0
+  DO 137 I = 1, 37, 2
+    S = S + I
+137 CONTINUE
+  PRINT *, S
+END

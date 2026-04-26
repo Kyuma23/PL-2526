@@ -1,0 +1,5 @@
+PROGRAM ARITH_3
+  INTEGER A
+  A = 3 + 6 * (8 - 3)
+  PRINT *, A
+END

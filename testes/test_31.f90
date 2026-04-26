@@ -1,0 +1,8 @@
+PROGRAM DO_TEST_31
+  INTEGER I, S
+  S = 0
+  DO 131 I = 1, 31, 2
+    S = S + I
+131 CONTINUE
+  PRINT *, S
+END

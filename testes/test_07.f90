@@ -1,0 +1,5 @@
+PROGRAM ARITH_7
+  INTEGER A
+  A = 7 + 14 * (12 - 7)
+  PRINT *, A
+END

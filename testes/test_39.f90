@@ -1,0 +1,8 @@
+PROGRAM DO_TEST_39
+  INTEGER I, S
+  S = 0
+  DO 139 I = 1, 39, 2
+    S = S + I
+139 CONTINUE
+  PRINT *, S
+END

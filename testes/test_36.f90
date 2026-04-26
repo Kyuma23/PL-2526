@@ -1,0 +1,8 @@
+PROGRAM DO_TEST_36
+  INTEGER I, S
+  S = 0
+  DO 136 I = 1, 36, 2
+    S = S + I
+136 CONTINUE
+  PRINT *, S
+END

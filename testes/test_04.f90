@@ -1,0 +1,5 @@
+PROGRAM ARITH_4
+  INTEGER A
+  A = 4 + 8 * (9 - 4)
+  PRINT *, A
+END

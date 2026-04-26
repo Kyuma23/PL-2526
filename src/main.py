@@ -1,25 +1,29 @@
-from lexer import lexer 
+import sys
+import json
+from parser import parse, ParseError
+
+def main():
+    if len(sys.argv) < 2:
+        return
+
+    filename = sys.argv[1]
+    try:
+        with open(filename, 'r') as f:
+            code = f.read()
+        
+        try:
+            ast = parse(code)
+            print(json.dumps(ast, indent=2))
+        except ParseError as e:
+            print(f"Syntax Error: {e}")
+            sys.exit(1)
+        except Exception as e:
+            print(f"Error: {e}")
+            sys.exit(1)
+            
+    except FileNotFoundError:
+        print(f"Error: File {filename} not found.")
+        sys.exit(1)
 
 if __name__ == '__main__':
-    test_code = '''
-    PROGRAM TESTE
-        ! Declaracao de variaveis
-        INTEGER A, B
-        REAL C
-        
-        A = 10
-        B = 20
-        C = 3.14
-        
-        ! Controlo de fluxo e operadores relacionais
-        IF (.NOT. A .LT. B .AND. .TRUE. .AND. .FALSE. ) THEN
-            PRINT *, 'A e menor que B'
-            CALL MINHASUB(A)
-        ENDIF
-    END
-    '''
-    
-    print("A iniciar análise léxica...\n")
-    lexer.input(test_code)
-    for tok in lexer:
-        print(f"Token: {tok.type:12} | Valor: {tok.value}")
+    main()

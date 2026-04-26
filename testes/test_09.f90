@@ -1,0 +1,5 @@
+PROGRAM ARITH_9
+  INTEGER A
+  A = 9 + 18 * (14 - 9)
+  PRINT *, A
+END
