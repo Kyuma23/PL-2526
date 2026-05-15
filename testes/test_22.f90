@@ -1,8 +1,0 @@
-PROGRAM IF_TEST_22
-  IF (22 .GT. 25) THEN
-    PRINT *, "MAIOR"
-    IF (22 .EQ. 30) PRINT *, "VINTE"
-  ELSE
-    PRINT *, "MENOR"
-  ENDIF
-END

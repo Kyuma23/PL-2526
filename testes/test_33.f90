@@ -1,8 +1,0 @@
-PROGRAM DO_TEST_33
-  INTEGER I, S
-  S = 0
-  DO 133 I = 1, 33, 2
-    S = S + I
-133 CONTINUE
-  PRINT *, S
-END

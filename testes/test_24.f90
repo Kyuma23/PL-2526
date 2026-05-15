@@ -1,8 +1,0 @@
-PROGRAM IF_TEST_24
-  IF (24 .GT. 25) THEN
-    PRINT *, "MAIOR"
-    IF (24 .EQ. 30) PRINT *, "VINTE"
-  ELSE
-    PRINT *, "MENOR"
-  ENDIF
-END

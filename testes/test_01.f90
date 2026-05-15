@@ -1,5 +1,0 @@
-PROGRAM ARITH_1
-  INTEGER A
-  A = 1 + 2 * (6 - 1)
-  PRINT *, A
-END

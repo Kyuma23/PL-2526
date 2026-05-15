@@ -1,5 +1,0 @@
-PROGRAM ARITH_8
-  INTEGER A
-  A = 8 + 16 * (13 - 8)
-  PRINT *, A
-END

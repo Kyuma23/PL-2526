@@ -1,8 +1,0 @@
-PROGRAM DO_TEST_35
-  INTEGER I, S
-  S = 0
-  DO 135 I = 1, 35, 2
-    S = S + I
-135 CONTINUE
-  PRINT *, S
-END

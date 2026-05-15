@@ -1,5 +1,0 @@
-PROGRAM ARITH_5
-  INTEGER A
-  A = 5 + 10 * (10 - 5)
-  PRINT *, A
-END
