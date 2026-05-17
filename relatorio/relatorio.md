@@ -1,4 +1,3 @@
-# Relatório do Compilador
 
 <div align="center">
 
@@ -11,34 +10,34 @@
 
 <br><br>
 
-# Processamento de Liguagens
+# Processamento de Linguagens
 ## Trabalho prático
 
 ### Grupo 49
 
 <br><br>
 
-<table>
-<tr>
-<td align="center">
+<div style="display: flex; justify-content: center; align-items: flex-start; gap: 40px;">
+<div style="text-align: center;">
 <img src="imagens/Diogo.png" width="140"><br>
 <b>Diogo Linhares Campos</b><br>
 (A106920)
-</td>
-<td align="center">
+</div>
+<div style="text-align: center;">
 <img src="imagens/Nelson.png" width="140"><br>
 <b>Nelson Daniel Araújo Sousa</b><br>
 (A109068)
-</td>
-<td align="center">
+</div>
+<div style="text-align: center;">
 <img src="imagens/Duarte.jpeg" width="140"><br>
 <b>Duarte Alexandre Oliveira Faria</b><br>
 (A95609)
-</td>
-</tr>
-</table>
+</div>
+</div>
 
 </div>
+
+<div style="page-break-before: always;"></div>
 
 ## 1. Introdução
 
@@ -56,6 +55,28 @@ O compilador encontra-se dividido em cinco ficheiros principais: `lexer.py`, `pa
 - `codegen.py` traduz a AST validada em instruções para a máquina virtual.
 - `main.py` faz a ligação entre todas as fases e gera o ficheiro de saída `.vm`.
 
+O fluxo de compilação corresponde a um pipeline em que a saída de cada fase é a entrada da fase seguinte:
+
+```
++----------+    +----------+    +----------+    +----------+    +----------+
+|  Fonte   | -> |  Lexer   | -> |  Parser  | -> | Semântica| -> | Codegen  | -> .vm
+|   .f90   |    |  tokens  |    |   AST    |    |AST valid.|    | instruç. |
++----------+    +----------+    +----------+    +----------+    +----------+
+```
+
+Ao nível dos ficheiros, o projeto está organizado da seguinte forma:
+
+```
+PL-2526/
+├── src/
+│   ├── lexer.py      # análise léxica
+│   ├── parser.py     # análise sintática (constrói a AST)
+│   ├── semantic.py   # análise semântica
+│   ├── codegen.py    # geração de código
+│   └── main.py       # ponto de entrada
+└── testes/           # programas de teste e respetivas saídas .vm
+```
+
 ## 3. Análise léxica
 
 O módulo léxico foi implementado com PLY e tem como objetivo reconhecer os elementos básicos da linguagem. Entre as palavras reservadas suportadas encontram-se `PROGRAM`, `END`, `INTEGER`, `REAL`, `LOGICAL`, `CHARACTER`, `IF`, `DO`, `READ`, `PRINT`, `FUNCTION`, `SUBROUTINE`, `CALL` e `RETURN`.
@@ -63,6 +84,19 @@ O módulo léxico foi implementado com PLY e tem como objetivo reconhecer os ele
 Também foram definidos operadores relacionais e lógicos no estilo Fortran, como `.EQ.`, `.NE.`, `.LT.`, `.LE.`, `.GT.`, `.GE.`, `.AND.`, `.OR.` e `.NOT.`. Além disso, o lexer reconhece identificadores, números inteiros, números reais, strings e símbolos como `+`, `-`, `*`, `/`, `=`, `(`, `)` e `,`.
 
 O tratamento de comentários e de espaços em branco foi simplificado para não interferir na análise. O lexer também atualiza corretamente o número de linha, o que permite produzir mensagens de erro mais úteis em caso de falha.
+
+A tabela seguinte resume as principais categorias de tokens reconhecidas:
+
+| Categoria | Tokens |
+|-----------|--------|
+| Palavras reservadas | `PROGRAM`, `END`, `INTEGER`, `REAL`, `LOGICAL`, `CHARACTER`, `IF`, `THEN`, `ELSE`, `ENDIF`, `DO`, `CONTINUE`, `GOTO`, `READ`, `PRINT`, `FUNCTION`, `SUBROUTINE`, `CALL`, `RETURN` |
+| Operadores relacionais | `.EQ.`, `.NE.`, `.LT.`, `.LE.`, `.GT.`, `.GE.` |
+| Operadores lógicos | `.AND.`, `.OR.`, `.NOT.` |
+| Operadores aritméticos | `+`, `-`, `*`, `/` |
+| Delimitadores | `(`, `)`, `,` |
+| Atribuição | `=` |
+| Literais | inteiros, reais, strings, `.TRUE.`, `.FALSE.` |
+| Identificadores | nomes de variáveis e de subprogramas |
 
 ## 4. Gramática utilizada
 
@@ -269,8 +303,127 @@ python src/main.py exemplo.f90
 
 Se a compilação terminar com sucesso, é gerado automaticamente um ficheiro `.vm` com o mesmo nome base do ficheiro de entrada. Em caso de erro, o compilador apresenta uma mensagem correspondente à fase onde ocorreu a falha.
 
-## 10. Conclusão
+## 10. Exemplo de compilação
+
+Para ilustrar o resultado completo do processo de compilação, considera-se o seguinte programa em Fortran, presente em `testes/hello.f90`:
+
+```fortran
+PROGRAM HELLO
+      PRINT *, 'Ola, Mundo!'
+      END
+```
+
+Após a execução do compilador, é produzido o seguinte código para a máquina virtual (`testes/hello.vm`):
+
+```
+START
+PUSHS "Ola, Mundo!"
+WRITES
+PUSHS "\n"
+WRITES
+STOP
+```
+
+Cada instrução corresponde a um passo da execução: `START` marca o início do programa; `PUSHS` empilha uma string constante; `WRITES` imprime no ecrã o valor que está no topo da pilha; e `STOP` termina a execução. O segundo `PUSHS "\n"` seguido de `WRITES` é gerado automaticamente pelo compilador para produzir a quebra de linha implícita do `PRINT *` em Fortran.
+
+Este pequeno exemplo permite observar, de forma compacta, a correspondência entre as construções da linguagem de alto nível e as primitivas de baixo nível da máquina virtual, tornando visível o trabalho de tradução efetuado pelo gerador de código.
+
+Para uma demonstração com construções mais ricas (ciclo `DO`, leitura de inteiros e atribuição acumulativa), considera-se o cálculo de um fatorial, presente em `testes/fatorial.f90`:
+
+```fortran
+PROGRAM FATORIAL
+      INTEGER N, I, FAT
+
+      PRINT *, 'Introduza um numero inteiro positivo:'
+      READ *, N
+
+      FAT = 1
+      DO 10 I = 1, N
+         FAT = FAT * I
+10    CONTINUE
+
+      PRINT *, 'Fatorial de ', N, ': ', FAT
+      END
+```
+
+O código gerado pelo compilador é:
+
+```
+START
+PUSHI 0
+PUSHI 0
+PUSHI 0
+PUSHS "Introduza um numero inteiro positivo:"
+WRITES
+PUSHS "\n"
+WRITES
+READ
+ATOI
+STOREG 0
+PUSHI 1
+STOREG 2
+PUSHI 1
+STOREG 1
+LOOP1:
+PUSHG 1
+PUSHG 0
+INFEQ
+JZ ENDLOOP2
+PUSHG 2
+PUSHG 1
+MUL
+STOREG 2
+PUSHG 1
+PUSHI 1
+ADD
+STOREG 1
+JUMP LOOP1
+ENDLOOP2:
+PUSHS "Fatorial de "
+WRITES
+PUSHG 0
+WRITEI
+PUSHS ": "
+WRITES
+PUSHG 2
+WRITEI
+PUSHS "\n"
+WRITES
+STOP
+```
+
+Os três `PUSHI 0` iniciais reservam espaço na pilha global para as variáveis declaradas (`N`, `I` e `FAT`). O ciclo `DO` é traduzido para um bloco com duas etiquetas, `LOOP1` e `ENDLOOP2`: o teste de paragem usa `INFEQ` (menor ou igual) seguido de `JZ`, e cada iteração termina com um `JUMP` de regresso ao início. O acumulador `FAT` é multiplicado pelo contador `I` em cada iteração com `MUL`, e o valor final é impresso com `WRITEI`.
+
+## 11. Testes
+
+Para garantir a qualidade do compilador, foi criado um conjunto de testes automatizado na diretoria `testes/`, dividido em dois grupos:
+
+- **`positivos/`** — programas que devem compilar com sucesso e gerar o respetivo ficheiro `.vm`. Cobrem expressões aritméticas (`arith`), atribuições (`assign`), arrays (`array`), ciclos `DO` (`doloop`), condicionais `IF/ELSE` (`ifelse`), operadores lógicos (`logop`), funções com diferentes assinaturas (`func`, `func_inexpr`, `func_multi`) e sub-rotinas (`subrot`, `sub_multi`, `sub_noargs`).
+- **`negativos/`** — programas que devem falhar com uma mensagem de erro específica. Cada teste tem um ficheiro `.expected` com a mensagem que se espera obter do compilador.
+
+O ficheiro `run_tests.py` corre todos os testes automaticamente: para os positivos confirma que o `.vm` é gerado; para os negativos confirma que a saída do compilador contém a mensagem do `.expected`.
+
+Algumas das mensagens de erro testadas são:
+
+| Teste | Mensagem esperada |
+|-------|-------------------|
+| `undeclared` | `Undeclared identifier B` |
+| `dupdecl` | `Duplicate declaration A` |
+| `uninit` | `Uninitialized variable A` |
+| `typemis` | `Type error` |
+| `goto_undef` | `GOTO to undefined label 99` |
+| `dolabel` | `DO label mismatch` |
+| `wrongargs` | `expected 2 arguments` |
+| `sub_wrongargs` | `Subroutine MOSTRA expected 1 arguments` |
+| `sub_badtype` | `argument 1 expected int` |
+| `call_on_func` | `QUAD is not a subroutine` |
+
+Esta abordagem permitiu, durante o desenvolvimento, detetar rapidamente regressões sempre que se introduzia uma alteração numa das fases do compilador, e serviu também como documentação executável do conjunto de construções suportadas pela linguagem.
+
+## 12. Conclusão
 
 O projeto permitiu desenvolver um compilador funcional, dividido em fases bem definidas e com uma arquitetura limpa e extensível. A solução cobre as construções principais da linguagem e produz código intermédio para execução numa máquina virtual.
 
 Do ponto de vista técnico, as decisões mais importantes foram a utilização de AST, a gestão de scopes com tabela de símbolos e a separação clara entre análise semântica e geração de código. Estas escolhas deram robustez ao projeto e facilitaram a sua evolução.
+
+Como trabalho futuro, identificamos a implementação de otimizações simples sobre a AST ou sobre o código gerado, como a propagação de constantes e a eliminação de subexpressões redundantes, que permitiriam reduzir o número de instruções emitidas para a máquina virtual sem alterar a semântica do programa.
