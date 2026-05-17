@@ -67,12 +67,33 @@ class SymbolTable:
 class SemanticAnalyzer:
     def __init__(self):
         self.st = SymbolTable()
+        self.labels = set()
         self.type_map = {
             'INTEGER': 'int',
             'LOGICAL': 'bool',
             'REAL': 'float',
             'CHARACTER': 'string'
         }
+
+    def _collect_labels(self, statements):
+        labels = set()
+        for stmt in statements:
+            if stmt is None:
+                continue
+            nt = stmt.get('node')
+            if nt == 'labeled_stmt':
+                labels.add(stmt['label'])
+                inner = stmt.get('statement')
+                if inner:
+                    labels |= self._collect_labels([inner])
+            elif nt == 'if_stmt':
+                labels |= self._collect_labels(stmt.get('then', []))
+                labels |= self._collect_labels(stmt.get('else', []))
+            elif nt == 'do_stmt':
+                if 'end_label' in stmt:
+                    labels.add(stmt['end_label'])
+                labels |= self._collect_labels(stmt.get('body', []))
+        return labels
 
     def analyze(self, ast):
         if ast['node'] != 'program_file':
@@ -111,6 +132,7 @@ class SemanticAnalyzer:
 
     def _analyze_main(self, node):
         self.st.push_scope()
+        self.labels = self._collect_labels(node['statements'])
         self._declare_block_vars(node['declarations'])
         for stmt in node['statements']:
             self._visit_stmt(stmt)
@@ -118,7 +140,8 @@ class SemanticAnalyzer:
 
     def _analyze_subprogram(self, node):
         self.st.push_scope()
-        
+        self.labels = self._collect_labels(node['statements'])
+
         self._declare_block_vars(node['declarations'])
         
         current_scope = self.st.stack[-1]
@@ -248,6 +271,10 @@ class SemanticAnalyzer:
                     raise SemanticError(f"line {lineno}: Subroutine {name} argument {i+1} expected {self.type_map.get(expected_type)}, got {self.type_map.get(arg_type)}")
                 if arg['node'] == 'id':
                     self.st.initialize(arg['name'], lineno)
+
+        elif node_type == 'goto_stmt':
+            if stmt['label'] not in self.labels:
+                raise SemanticError(f"line {lineno}: GOTO to undefined label {stmt['label']}")
 
         elif node_type == 'return_stmt':
             pass

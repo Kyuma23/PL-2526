@@ -115,8 +115,9 @@ declaration   : type id_decl_list
 type          : INTEGER
               | REAL
               | LOGICAL
-              | CHARACTER            
-              | CHARACTER_SIZE
+              | CHARACTER
+              | CHARACTER LPAREN INT_CONST RPAREN
+              | CHARACTER TIMES INT_CONST
 
 id_decl_list  : id_decl_list COMMA id_decl
               | id_decl
@@ -138,6 +139,7 @@ statement     : assign_stmt
               | if_stmt
               | do_stmt
               | goto_stmt
+              | continue_stmt
               | print_stmt
               | read_stmt
               | call_stmt
@@ -155,9 +157,7 @@ if_stmt       : IF LPAREN expr RPAREN THEN
                 ELSE
                   statements
                 ENDIF
-
-if_stmt       : IF ( expr ) THEN statements ENDIF
-              | IF ( expr ) THEN statements ELSE statements ENDIF
+              | IF LPAREN expr RPAREN statement
 
 do_stmt       : DO INT_CONST ID EQUALS expr COMMA expr
                   do_body do_end
@@ -167,7 +167,10 @@ do_body        : do_body statement
               | ε
 
 do_end        : INT_CONST CONTINUE
+
 goto_stmt     : GOTO INT_CONST
+
+continue_stmt : CONTINUE
 
 
 print_stmt    : PRINT TIMES COMMA expr_list
@@ -229,7 +232,8 @@ Foram implementadas verificações para:
 - uso de variáveis não inicializadas;
 - compatibilidade de tipos em atribuições e expressões;
 - validação do tipo dos índices de arrays;
-- validação do número e tipo de argumentos em chamadas.
+- validação do número e tipo de argumentos em chamadas;
+- coerência de labels: instruções `GOTO` só podem saltar para labels que estejam efetivamente definidos no corpo do mesmo subprograma (incluindo o label terminal de um ciclo `DO`). A correspondência entre o label do `DO N` e o `N CONTINUE` que o termina é, por sua vez, garantida ao nível da gramática.
 
 A análise faz primeiro a recolha das assinaturas de funções e sub-rotinas e só depois analisa os respetivos corpos. Isto permite resolver chamadas recursivas e dependências entre unidades do programa.
 
